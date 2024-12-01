@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kafka Click Tracker</title>
+</head>
+<body>
+<h1>Kafka Click Tracker</h1>
+
+<!-- Form to add a click -->
+<form action="/click" method="post">
+    <label for="userId">User ID:</label>
+    <input type="text" id="userId" name="userId" required>
+    <button type="submit">Click Here</button>
+</form>
+
+<!-- Click results -->
+<h2>Click Results</h2>
+<ul id="clickCountsList">
+    <!-- Clicks will be updated dynamically here -->
+</ul>
+
+<script>
+    // Function to fetch clicks via AJAX
+    async function fetchClickCounts() {
+        try {
+            const response = await fetch('/api/clicks');
+            const clickCounts = await response.json();
+
+            // Update the list of clicks
+            const listElement = document.getElementById('clickCountsList');
+            listElement.innerHTML = ''; // Clear the old list
+            for (const [userId, count] of Object.entries(clickCounts)) {
+                const li = document.createElement('li');
+                li.textContent = `User: ${userId}, Total Clicks: ${count}`;
+                listElement.appendChild(li);
+            }
+        } catch (error) {
+            console.error('Error fetching clicks:', error);
+        }
+    }
+
+    // Refresh clicks every 2 seconds
+    setInterval(fetchClickCounts, 2000);
+
+    // Load clicks when the page is ready
+    window.onload = fetchClickCounts;
+</script>
+</body>
+</html>
